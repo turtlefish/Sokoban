@@ -1,2 +1,3 @@
-# Sokoban
-Text based Sokoban clone written in Python
+# Text-based Sokoban Clone
+
+*Written in Python3.5.2*
