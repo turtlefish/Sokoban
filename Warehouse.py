@@ -118,4 +118,3 @@ while True:
     os.system(get_os_clear())
     print(wh)
     wh.move()
-

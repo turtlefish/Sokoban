@@ -2,7 +2,7 @@ class MapReader(object):
     def __init__(self):
         self.data = self.get_map_from_file()
         self.player_start = self.get_player_start()
-        self.goals = self.get_goals()
+        self.goals = self.get_goal_positions()
         self.game_map = self.get_game_map()
 
     def get_map_from_file(self):
@@ -22,14 +22,19 @@ class MapReader(object):
 
     def get_player_start(self):
         """Returns the players start coordinates (tuple)"""
-        return tuple(int(x) for x in self.data[0].split(","))
+        for row in range(len(self.data)):
+            for cell in range(len(self.data[0])):
+                if self.data[row][cell] == "P" or self.data[row][cell] == "p":
+                    return cell, row
 
-    def get_goals(self):
+    def get_goal_positions(self):
         """Returns the coordinates of the goals (list of tuples)"""
+        goal_text = ["O", "b", "p"]
         goals = []
-
-        for goal in self.data[1].split():
-            goals.append(tuple(int(x) for x in goal.split(",")))
+        for row in range(len(self.data)):
+            for cell in range(len(self.data[0])):
+                if self.data[row][cell] in goal_text:
+                    goals.append((cell, row))
 
         return goals
 
@@ -37,10 +42,18 @@ class MapReader(object):
         """Returns the map (List of lists containing a row of strings representing a tile)"""
         game_map = []
 
-        for row in self.data[2:]:
+        for row in self.data:
             current_row = []
             for cell in row:
-                current_row.append(cell)
+                if cell == "P" or cell == "p" or cell == "O":
+                    current_row.append(" ")
+
+                elif cell == "b":
+                    current_row.append("B")
+
+                else:
+                    current_row.append(cell)
+
             game_map.append(current_row)
 
         return game_map
@@ -52,20 +65,4 @@ class MapReader(object):
         3. The map (List of lists containing a row of strings representing a tile)
         formatted_data = [player start, goals, map]
         """
-        formatted_data = [tuple(int(x) for x in self.data[0].split(","))]  # Add player start
-        goals = []
-        game_map = []
-
-        for goal in self.data[1].split():
-            goals.append(tuple(int(x) for x in goal.split(",")))
-
-        for row in self.data[2:]:
-            current_row = []
-            for cell in row:
-                current_row.append(cell)
-            game_map.append(current_row)
-
-        formatted_data.append(goals)
-        formatted_data.append(game_map)
-
-        return formatted_data
+        return [self.player_start, self.goals, self.game_map]
